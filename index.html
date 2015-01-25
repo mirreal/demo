@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>HOME</title>
+		<meta charset="utf-8">
+		<link rel="icon" href="favicon.ico">
+		<style>
+		* {margin: 0;padding: 0;height: 100%;}
+		body {
+			background-color: #3eb3c4;
+			color:white;
+			font-family: 'Concert One', cursive;
+			font-size: 30pt;
+		}
+		#wrapper {
+			display: table;
+			margin: 0 auto;
+			padding: 6px;
+			background: #2EDBAC;
+			border: 24px groove #E2AD44;
+		}
+		#cell {
+			display: table-cell;
+			vertical-align: middle;
+		}
+		.wine {
+			width:126px; 
+			height:210px;
+			background-color:white;
+			-webkit-border-radius: 73px 73px 83px 83px / 210px 210px 108px 108px;
+			-moz-border-radius: 73px 73px 83px 83px / 210px 210px 108px 108px;
+			-o-border-radius: 73px 73px 83px 83px / 210px 210px 108px 108px;
+		    background: -webkit-gradient(linear, center top, center bottom,  color-stop(0%,rgba(255,255,255,0)), color-stop(5%,rgba(255,255,255,0)),color-stop(5%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,1)));
+		
+		}
+		.wine::before {
+		  position:relative;
+		  top:100%;
+		  left:58px;
+		  display:block;
+		  content:'';
+		  height:150px;
+		  width: 10px;
+		  background-color:white;
+		}
+		.wine::after {
+		  position:relative;
+		  top:100%;
+		  left:0px;
+		  display:block;
+		  content:'';
+		  height:10px;
+		  width:126px;
+		  border-radius: 190px 190px 0 0;
+		  -moz-border-radius: 190px 190px 0 0;
+		  -webkit-border-radius: 400px 400px 0 0;
+		  background:white;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="wrapper">
+			<div id="cell">
+				<div class='wine'></div>
+			</div>
+		</div>
+	</body>
+</html>
