@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Scratcher</title>
+  <script>
+    var Scratcher = (function(){
+      'use strict'
+       
+      function index(arr, i){
+        return i < 0 ? arr[arr.length + i] : arr[i]
+      }
+       
+      function range(arr, start, end){
+        return arr.slice(start, end + 1)
+      }
+       
+      function bind(){
+        var args = [].slice.call(arguments, 0),
+          element = index(args, 0),
+          events = range(args, 1, -2),
+          handle = index(args, -1)
+        for(var i = events.length; i--;){
+          element.addEventListener(events[i], handle)
+        }
+        return {
+          destory: function(){
+            for(var i = events.length; i--;){
+              element.removeEventListener(events[i], handle)
+            }   
+          }
+        }
+      }
+       
+      var requestAnimationFrame = window.requestAnimationFrame 
+      || window.mozRequestAnimationFrame
+      || window.webkitRequestAnimationFrame
+      || window.msRequestAnimationFrame
+      || window.oRequestAnimationFrame
+      || function(callback) {
+        setTimeout(callback, 1000 / 60)
+      }
+       
+      return function(obj, back, front, height, width){
+        function render(){
+          tempCtx.drawImage(drawCanvas, 0, 0)
+          tempCtx.save()
+          tempCtx.globalCompositeOperation = 'source-atop'
+          tempCtx.drawImage(self.image.back, 0, 0)
+          tempCtx.restore()
+          ctx.drawImage(self.image.front, 0, 0)
+          ctx.drawImage(tempCanvas, 0, 0)
+        }
+         
+        function moveHandle(e){
+          e.preventDefault()
+          if(mousedown){
+            if(e.changedTouches){
+              e = e.changedTouches[e.changedTouches.length - 1]
+            }
+            var x = (e.clientX + document.body.scrollLeft || e.pageX) - canvas.offsetLeft || 0,
+              y = (e.clientY + document.body.scrollTop || e.pageY) - canvas.offsetTop || 0
+            if(lastPoint){
+              drawCtx.beginPath()
+              drawCtx.moveTo(lastPoint.x, lastPoint.y)
+            }
+            drawCtx.lineTo(x, y)
+            drawCtx.stroke()
+            lastPoint = {
+              'x': x,
+              'y': y
+            }
+            render()
+          }
+        }
+ 
+        function downHandle(e){
+          e.preventDefault()
+          mousedown = true
+          if(e.changedTouches){
+            e = e.changedTouches[e.changedTouches.length - 1]
+          }
+          var x = (e.clientX + document.body.scrollLeft || e.pageX) - canvas.offsetLeft || 0,
+            y = (e.clientY + document.body.scrollTop || e.pageY) - canvas.offsetTop || 0
+          lastPoint = {
+            'x': x,
+            'y': y
+          }
+          render()
+        }
+ 
+        function upHandle(e){
+          e.preventDefault()
+          mousedown = false
+          lastPoint = null
+           
+          var result = (function(){
+            var data = drawCtx.getImageData(0, 0, drawCanvas.width, drawCanvas.height).data
+            for(var i = 0, j = 0; i < data.length; i += 4){
+              if(data[i+3]){
+                j++
+              }
+            }
+            return j / (drawCanvas.width * drawCanvas.height)
+          })()
+          for(var i = eventList.length; i--;){
+            switch(eventList[i].type){
+              case 'change':
+                eventList[i].cb(result)
+                break
+              default:
+            }
+          }
+          render()
+        }
+         
+        var canvas = (function(obj){
+            if(obj instanceof HTMLCanvasElement){
+              return obj
+            }else if(typeof obj === 'string' && document.querySelector(obj)){
+              return document.querySelector(obj)
+            }else{
+              return document.createElement('canvas')
+            }
+          })(obj),
+          ctx = canvas.getContext('2d'),
+          eventList = [],
+          listener = [
+            bind(document, 'touchmove', 'mousemove', moveHandle),
+            bind(canvas, 'touchstart', 'mousedown', downHandle),
+            bind(document, 'touchend', 'mouseup', upHandle)
+          ],
+          drawCanvas = document.querySelector('#draw'),
+          drawCtx = drawCanvas.getContext('2d'),
+          tempCanvas = document.querySelector('#temp'),
+          tempCtx = tempCanvas.getContext('2d'),
+          mousedown = false,
+          lastPoint = null,
+          self = this
+         
+        drawCanvas.height = tempCanvas.height = canvas.height = height
+        drawCanvas.width = tempCanvas.width = canvas.width = width
+         
+        drawCtx.strokeStyle = 'black'
+        drawCtx.lineWidth = 30
+        drawCtx.lineCap = ctx.lineJoin = 'round'
+         
+        this.on = function(eventName, cb){
+          switch(eventName){
+            case 'change':
+              eventList.push({'type': 'change', 'cb': cb})
+              break
+            default:
+              throw new Error('Event' + eventName + ' does not exist.')
+          }
+        }
+         
+        this.end = function(ms){
+          function animate(){
+            var pastTime = new Date().getTime() - startTime
+            render()
+            ctx.save()
+            ctx.globalAlpha = pastTime / ms
+            ctx.drawImage(self.image.back, 0, 0)
+            ctx.restore()
+            if(pastTime < ms){
+              requestAnimationFrame(animate)
+            }
+          }
+           
+          for(var i = listener.length; i--;){
+            listener[i].destory()
+          }
+          if(ms){
+            var startTime = new Date().getTime()
+            ctx.globalAlpha = 0
+            requestAnimationFrame(animate)
+          }else{
+            ctx.drawImage(self.image.back, 0, 0)
+          }
+        }
+         
+        this.canvas = canvas
+         
+        this.image = {
+          'back': back,
+          'front': front
+        }
+         
+        render()
+      }
+    })()
+     
+    function main(){
+      'use strict'
+       
+      function init(){
+        if(++loaded === 2){
+          var s = new Scratcher('#scratcher', back, front, 500, 800)
+          s.on('change', function(e){
+            if(e > 0.4){
+              s.end(2000)
+            }
+          })
+        }
+      }
+       
+      document.body.style.webkitUserSelect = document.body.style.mozUserSelect = 'none'
+      var front = new Image(),
+        back = new Image(),
+        loaded = 0
+      front.addEventListener('load', init)
+      back.addEventListener('load', init)
+       
+      //front.src = 'front.png'
+      //back.src = 'back.png'
+
+      front.src = 'p_1.jpg'
+      back.src = 'p_0.jpg'
+    }
+     
+    document.addEventListener('DOMContentLoaded', main)
+  </script>
+</head>
+<body>
+  <canvas id='scratcher'></canvas>
+  <br/>
+  <canvas id='temp'></canvas>
+  <br/>
+  <canvas id='draw'></canvas>
+</body>
+</html>
