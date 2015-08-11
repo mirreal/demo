@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Time & color</title>
+    <style>
+    body {
+      background: #fefefe;
+    }
+    .container {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      margin: auto;
+      width: 320px;
+      height: 180px;
+      color: #fefefe;
+      font-size: 64px;
+      font-family: cursive;
+      text-align: center;
+      line-height: 180px;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container">TIME</div>
+    <script>
+    (function() {
+      'use starict';
+
+      var container = document.querySelector('.container');
+
+      var getTime = function() {
+        var date = new Date();
+        var hour = date.getHours();
+        var min = date.getMinutes();
+        var sec = date.getSeconds();
+        if (hour < 10) hour = '0' + hour;
+        if (min < 10) min = '0' + min;
+        if (sec < 10) sec = '0' + sec;
+        return [hour, min, sec];
+      };
+
+      var loop = function() {
+        var vector = getTime();
+        container.innerHTML = vector[0] + ':' + vector[1] + ':' + vector[2];
+        document.body.style.background = '#' + vector[0] + vector[1] + vector[2];
+      };
+      
+      loop();
+      setInterval(loop, 1000);
+    })();
+    </script>
+  </body>
+</html>
