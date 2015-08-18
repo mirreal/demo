@@ -32,14 +32,14 @@
       }
        
       var requestAnimationFrame = window.requestAnimationFrame 
-      || window.mozRequestAnimationFrame
-      || window.webkitRequestAnimationFrame
-      || window.msRequestAnimationFrame
-      || window.oRequestAnimationFrame
-      || function(callback) {
-        setTimeout(callback, 1000 / 60)
-      }
-       
+          || window.mozRequestAnimationFrame
+          || window.webkitRequestAnimationFrame
+          || window.msRequestAnimationFrame
+          || window.oRequestAnimationFrame
+          || function(callback) {
+            setTimeout(callback, 1000 / 60)
+          }
+
       return function(obj, back, front, height, width){
         function render(){
           tempCtx.drawImage(drawCanvas, 0, 0)
@@ -195,7 +195,7 @@
        
       function init(){
         if(++loaded === 2){
-          var s = new Scratcher('#scratcher', back, front, 500, 800)
+          var s = new Scratcher('#scratcher', back, front, 300, 600)
           s.on('change', function(e){
             if(e > 0.4){
               s.end(2000)
@@ -224,8 +224,8 @@
 <body>
   <canvas id='scratcher'></canvas>
   <br/>
-  <canvas id='temp'></canvas>
+  <canvas id='temp' style="display: none"></canvas>
   <br/>
-  <canvas id='draw'></canvas>
+  <canvas id='draw' style="display: none"></canvas>
 </body>
 </html>

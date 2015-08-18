@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="apple-touch-fullscreen" content="YES">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>Number</title>
+
+    <style>
+      .home {
+        background: #000;
+      }
+      .home .num {
+        display: inline-block;
+        width: 75px;
+        height: 90px;
+        background: url(../img/num.png) no-repeat;
+        background-position: 0px 0px;
+      }
+    </style>
+
+  </head>
+  <body>
+    <div class="home">
+      <div class="scrollNum"></div>
+    </div>
+
+    <script>
+
+      var $ = document.querySelector;
+
+      function loopNum(limit, elem) {
+
+        var position = '';
+        var randomNum = Math.floor(Math.random() * 10)
+        var count = limit + randomNum;
+
+        var loop = setInterval(function() {
+
+          position = '0 ' + (-(count++ % 10) * 90) + 'px';
+          document.querySelector(elem).style.backgroundPosition = position;
+
+          if (count - 1 == limit + 20) clearInterval(loop)
+
+        }, 40);
+
+      }
+
+      function scrollNum(num, elem) {
+
+        document.querySelector(elem).innerHTML = '';
+
+        for ( var i = 0, len = num.length; i < len; i++) {
+
+          document.querySelector(elem).innerHTML += '<div class="num place-' + i + '"></div>';
+
+          var className = elem + ' .place-' + i;
+          loopNum(num[i], className);
+        }
+
+      }
+
+      scrollNum([7, 5, 0], '.scrollNum')
+
+    </script>
+  </body>
+</html>
