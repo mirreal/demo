@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Radar</title>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				background: #4a515f;
+				color: #fff;
+			}
+			.radar {
+				position: relative;
+				width: 370px;
+				height: 370px
+			}
+			.radar-halo {
+				border: 2px solid #FFFFFF;
+				width: 370px;
+				height: 370px;
+				-webkit-animation: pulse 2s ease-in-out infinite;
+				-moz-animation: pulse 2s ease-in-out infinite;
+				animation: pulse 2s ease-in-out infinite;
+				border-radius: 50%
+			}
+			.radar-center {
+				background: #C1CCE3;
+				width: 20px;
+				height: 20px;
+				position: absolute;
+				left: 175px;
+				top: 175px;
+				border-radius: 50%;
+				-webkit-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+				-moz-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+				box-shadow: 0px 1px 2px 0px rgba(242, 104, 20, 0.3);
+			}
+			 @-webkit-keyframes pulse {
+				0% {
+					opacity: 0.8;
+					-webkit-transform: scaleX(0.1)scaleY(0.1)
+				}
+				65% {
+					opacity: 0;
+					-webkit-transform: scaleX(1)scaleY(1)
+				}
+				100% {
+					opacity: 0;
+					-webkit-transform: scaleX(1)scaleY(1)
+				}
+			}
+			@keyframes pulse {
+				0% {
+					opacity: 0.8;
+					transform: scaleX(0.1)scaleY(0.1)
+				}
+				65% {
+					opacity: 0;
+					transform: scaleX(1)scaleY(1)
+				}
+				100% {
+					opacity: 0;
+					transform: scaleX(1)scaleY(1)
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="radar">
+          <div class="radar-halo"></div>
+          <div class="radar-center"></div>
+        </div>
+	</body>
+</html>
