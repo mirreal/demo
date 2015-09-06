@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Score borad</title>
+		<style>
+		  * {
+		    margin: 0;
+		    padding: 0;
+		    text-decoration: none;
+		  }
+		  .wrap {
+		    width: 300px;
+		    height: 40px;
+		    background: lightblue;
+		    overflow: hidden;
+		  }
+		  .inner {
+		    display: box;
+		    display: -webkit-box;
+		    box-orient: horizontal;
+		    -webkit-box-orient: horizontal;
+        width: 300px;
+        height: 80px;
+        font-size: 36px;
+        color: #fefefe;
+        text-align: center;
+        background: lightgreen;
+      }
+      .postion {
+        -webkit-box-flex: 1;
+        box-flex: 1;
+      }
+      .jump {
+        animation: jump 0.8s infinite;
+        -webkit-animation: jump 0.8s infinite;
+      }
+      @keyframes jump {
+        from{transform: translateY(0px)}
+        to{transform: translateY(-40px);}
+      }
+      @-webkit-keyframes jump {
+        from{transform: translateY(0px)}
+        to{transform: translateY(-40px);}
+      }
+      .day {
+        height: 40px;
+        line-height: 40px;
+      }
+		  .top {
+		    background: lightcoral;
+		  }
+		  .buttom {
+		    background: lightpink;
+		  }
+		</style>
+	</head>
+	<body>
+	   <div class="wrap">
+  	  <div class="inner">
+  	    <section class="postion">
+  	      <div class="day top">3</div>
+          <div class="day buttom">4</div>
+  	    </section>
+  	  </div>
+  	 </div>
+  	 
+  	 <script src="../js/jquery-2.1.1.min.js"></script>
+  	 <script>
+  	   (function() {
+  	     var int2array = function(num) {
+  	       if (num >= Math.pow(2, 32)) return console.log('Bad Number');
+  	       if (num == 0) return [0];
+
+  	       var arr = [];
+
+  	       while (num) {
+  	         arr.unshift(num % 10);
+  	         num = parseInt(num / 10);
+  	       }
+
+  	       return arr;
+  	     };
+
+  	     var intReverse = function(num) {
+  	       num = parseInt(num);
+  	       var ans = 0;
+  	       
+  	       while (num) {
+  	         ans = ans * 10 + num % 10;
+  	         num = parseInt(num / 10);
+  	       }
+  	       
+  	       return ans;
+  	     };
+  	     
+  	     var newScore = function(score) {
+           var scores = int2array(score);
+           
+           $('.inner').empty();
+           
+           for (var i = 0, len = scores.length; i < len; i++) {
+             $('.inner').append('<section class="postion p-' + i + '">'
+              + '<div class="day top">' + scores[i] + '</div>'
+              + '<div class="day buttom">' + (scores[i] + 1) % 10 + '</div>'
+              + '</section>');
+
+             var prevSection;
+             if (i === len - 1) {
+               var currSection = '.p-' + i;
+               $(currSection).addClass('jump');
+               
+               var j = i;
+               while ((scores[j--] + 1) % 10 === 0) {
+                 prevSection = '.p-' + j;
+                 $(prevSection).addClass('jump');
+                 
+                 if (j === 0) break;
+               }
+
+             }
+           }
+  	     };
+  	     
+  	     var score = 2786;
+  	     newScore(score)
+
+  	     setInterval(function() {
+  	       newScore(++score);
+  	     }, 800);
+  	   })();
+  	 </script>
+	</body>
+</html>

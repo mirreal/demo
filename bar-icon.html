@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>bar-icon</title>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				background: #4a515f;
+				color: #fff;
+			}
+			.bar-icon-wrapper {
+			    position: absolute;
+			    top: 50%;
+			    left: 50%;
+			    margin-left: -100px;
+			    margin-top: -100px;
+			    -webkit-transform: translate3d(0, 0, 0); /* The zoom: 1; of new browsers */
+			}
+			
+			.bar-icon {
+			    height: 30px;
+			    width: 200px;
+			    background: #fff;
+			    display: block;
+			    opacity: 1;
+			    margin-top: 40px;
+			    -webkit-transition: -webkit-transform 0.15s linear;
+			    -o-transition: -o-transform 0.15s linear;
+			    -ms-transition: -ms-transform 0.15s linear;
+			    -moz-transition: -moz-transform 0.15s linear;
+			    transition: transform 0.15s linear;
+			    -webkit-transform-origin: 50% 50%;
+			    -o-transform-origin: 50% 50%;
+			    -ms-transform-origin: 50% 50%;
+			    -moz-transform-origin: 50% 50%;
+			    transform-origin: 50% 50%;
+			}
+			
+			.bar-icon:nth-child(2) {
+			    -webkit-transition: opacity 0.1s linear;
+			    -o-transition: opacity 0.1s linear;
+			    -ms-transition: opacity 0.1s linear;
+			    -moz-transition: opacity 0.1s linear;
+			    transition: opacity 0.1s linear;
+			}
+			
+			.active .bar-icon:nth-child(1) {
+			    -webkit-transform: rotate(45deg) translate3d(50px, 50px, 0);
+			    -o-transform: rotate(45deg) translate3d(50px, 50px, 0);
+			    -ms-transform: rotate(45deg) translate3d(50px, 50px, 0);
+			    -moz-transform: rotate(45deg) translate3d(50px, 50px, 0);
+			    transform: rotate(45deg) translate3d(50px, 50px, 0);
+			}
+			
+			.active .bar-icon:nth-child(2) {
+			    opacity: 0;
+			}
+			
+			.active .bar-icon:nth-child(3) {
+			    -webkit-transform: rotate(-45deg) translate3d(50px, -50px, 0);
+			    -o-transform: rotate(-45deg) translate3d(50px, -50px, 0);
+			    -ms-transform: rotate(-45deg) translate3d(50px, -50px, 0);
+			    -moz-transform: rotate(-45deg) translate3d(50px, -50px, 0);
+			    transform: rotate(-45deg) translate3d(50px, -50px, 0);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="bar-icon-wrapper">
+            <span class="bar-icon"></span>
+            <span class="bar-icon"></span>
+            <span class="bar-icon"></span>
+        </div>
+        <script>
+        	var _ = {
+			  hasClass: function(element, className) {
+			    return new RegExp("(^|\\s)" + className + "(\\s|$)").test(element.className);
+			  },
+			  addClass: function(element, className) {
+			    if (_.hasClass(element, className)) return;
+			    element.className += (' ' + className);
+			    element.className = element.className.trim();
+			  },
+			  removeClass: function(element, className) {
+			    if (!_.hasClass(element, className)) return;
+			    element.className = element.className.replace(className, ' ').trim();
+			  },
+			};
+
+        	var button = document.querySelector('.bar-icon-wrapper');
+        	button.addEventListener('click', function(event) {
+        		if (_.hasClass(this, 'active')) {
+        			_.removeClass(this, 'active');
+        		} else {
+        			_.addClass(this, 'active');
+        		}
+        	});
+        </script>
+	</body>
+</html>
