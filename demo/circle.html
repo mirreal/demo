@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>circle</title>
+<script src="js/zepto.js"></script>
+<style type="text/css">
+.test { width: 200px; margin: 100px auto 0; }
+.form { margin: 30px 0 0; }
+.form input { width: 100%; padding: 5px; border-radius: 3px; border: 1px solid #dfdfdf; box-shadow: inset 0 0 5px #dfdfdf; }
+.circle_progress .style { line-height: 180px; text-align: center; color: #86d592; font-size: 24px; font-weight: bold; font-family: verdana, sans-serif; }
+
+/* circle progress style */
+.circle_progress { width: 200px; height: 200px; background: #FB9C90; border-radius: 50%; position: relative; }
+.circle_progress .pie_left_wrap,
+.circle_progress .pie_left,
+.circle_progress .pie_right_wrap,
+.circle_progress .pie_right { display: block; width: 100%; height: 100%; position: absolute; left: 0; top: 0; }
+.circle_progress .pie_left_wrap,
+.circle_progress .pie_left { clip: rect(auto,100px,auto,auto); }
+.circle_progress .pie_right_wrap,
+.circle_progress .pie_right { clip: rect(auto,auto,auto,100px); }
+.circle_progress .pie_left,
+.circle_progress .pie_right { background: #ebf2ec; border-radius: 50%;
+  transition: transform 0.5s linear;
+  -webkit-transition: -webkit-transform 0.5s linear;
+  transform-origin: 50% 50%;
+  -webkit-transform-origin: 50% 50%;
+}
+.circle_progress .center { width: 180px; height: 180px; background: #fff; border-radius: 50%; position: absolute; left: 10px; top: 10px; }
+.circle_progress .center img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 90px;
+}
+</style>
+</head>
+
+<body>
+<div class="test">
+  <div class="circle_progress">
+    <div class="pie_left_wrap pie_wrap"><span class="pie_left"></span></div>
+    <div class="pie_right_wrap pie_wrap"><span class="pie_right"></span></div>
+    <div class="style center">
+      <img src="http://www.bopian.com/uploads/questions/20150329/4a0a76732a49dd399db22658a8456e51.jpg">
+    </div>
+  </div>
+</div>
+
+<script>
+
+$(function () {
+  setPercentage(64/100, $(".circle_progress"));
+  //$(".circle_progress .center").html("76%");
+
+  function setPercentage(percentage, elem) {
+
+    if (percentage >= 0 && percentage < 0.5) {
+      elem.find(".pie_right").css({
+        "transform":"rotate(" + percentage*360 + "deg)",
+        "-webkit-transform":"rotate(" + percentage*360 + "deg)"
+      })
+
+      elem.find(".pie_left").css({
+        "transform":"rotate(0deg)",
+        "-webkit-transform":"rotate(0deg)"
+      })
+    } else if (percentage >= 0.5 && percentage <=1) {
+      elem.find(".pie_right").css({
+        "transform":"rotate(180deg)",
+        "-webkit-transform":"rotate(180deg)"
+      })
+
+      elem.find(".pie_left").css({
+        "transform":"rotate(" + (percentage-0.5)*360 + "deg)",
+        "-webkit-transform":"rotate(" + (percentage-0.5)*360 + "deg)"
+      })
+    }
+  }
+
+  // 设置进度条，3个参数分别为：旧百分比、新百分比、作用对象
+  function setCircleAnim (m, n, obj) {
+    var speed = 0.5
+
+    if (n >= 0 && n < 0.5) {
+      if (m >= 0.5) {
+        resetTime();
+
+        obj.find(".pie_left").css({
+          "transition-duration":speed/(m-n)*(m-0.5) + "s",
+          "-webkit-transition-duration":speed/(m-n)*(m-0.5) + "s"
+        })
+
+        obj.find(".pie_right").css({
+          "transition-duration":speed/(m-n)*(0.5-n) + "s",
+          "-webkit-transition-duration":speed/(m-n)*(0.5-n) + "s",
+          "transition-delay":speed/(m-n)*(m-0.5) + "s",
+          "-webkit-transition-delay":speed/(m-n)*(m-0.5) + "s"
+        })
+      }
+
+      obj.find(".pie_right").css({
+        "transform":"rotate(" + n*360 + "deg)",
+        "-webkit-transform":"rotate(" + n*360 + "deg)"
+      })
+
+      obj.find(".pie_left").css({
+        "transform":"rotate(0deg)",
+        "-webkit-transform":"rotate(0deg)"
+      })
+    }
+
+    else if (n >= 0.5 && n <= 1) {
+      if (m <= 0.5) {
+        resetTime();
+        obj.find(".pie_right").css({
+
+          "transition-duration":speed/(n-m)*(0.5-m) + "s",
+          "-webkit-transition-duration":speed/(n-m)*(0.5-m) + "s"
+        })
+
+        obj.find(".pie_left").css({
+
+          "transition-duration":speed/(n-m)*(n-0.5) + "s",
+          "-webkit-transition-duration":speed/(n-m)*(n-0.5) + "s",
+
+          "transition-delay":speed/(n-m)*(0.5-m) + "s",
+          "-webkit-transition-delay":speed/(n-m)*(0.5-m) + "s"
+        })
+      }
+
+      obj.find(".pie_right").css({
+        "transform":"rotate(180deg)",
+        "-webkit-transform":"rotate(180deg)"
+      })
+
+      obj.find(".pie_left").css({
+        "transform":"rotate(" + (n-0.5)*360 + "deg)",
+        "-webkit-transform":"rotate(" + (n-0.5)*360 + "deg)"
+      })
+    }
+
+    function resetTime () {
+      obj.find(".pie_wrap span").css({
+        "transition-delay":"0",
+        "-webkit-transition-delay":"0",
+        "transition-duration":speed + "s",
+        "-webkit-transition-duration":speed + "s"
+      });
+    }
+  }
+})
+</script>
+
+</body>
+</html>
