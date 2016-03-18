@@ -1,0 +1,13 @@
+
+nohup.out
+*.sh
+*.iml
+*.cfg
+*.diff
+*.log
+.DS_Store
+Thumbs.db
+.project
+out/
+node_modules/
+
