@@ -29,20 +29,28 @@
 
     <script>
 
-      var $ = document.querySelector;
+      var $ = function(selector) {
+        return document.querySelector(selector);
+      };
 
       function loopNum(limit, elem) {
 
         var position = '';
         var randomNum = Math.floor(Math.random() * 10)
-        var count = limit + randomNum;
+        var count = limit + randomNum; // 这里随便取个数都可以
 
+        var list = [];
         var loop = setInterval(function() {
 
           position = '0 ' + (-(count++ % 10) * 90) + 'px';
-          document.querySelector(elem).style.backgroundPosition = position;
+          $(elem).style.backgroundPosition = position;
 
-          if (count - 1 == limit + 20) clearInterval(loop)
+          list.push(count)
+
+          if (count - 1 == limit + 20) {
+            clearInterval(loop);
+            console.log(limit, randomNum, list.length, list);
+          }
 
         }, 40);
 
@@ -50,11 +58,11 @@
 
       function scrollNum(num, elem) {
 
-        document.querySelector(elem).innerHTML = '';
+        $(elem).innerHTML = '';
 
         for ( var i = 0, len = num.length; i < len; i++) {
 
-          document.querySelector(elem).innerHTML += '<div class="num place-' + i + '"></div>';
+          $(elem).innerHTML += '<div class="num place-' + i + '"></div>';
 
           var className = elem + ' .place-' + i;
           loopNum(num[i], className);
@@ -62,7 +70,7 @@
 
       }
 
-      scrollNum([7, 5, 0], '.scrollNum')
+      scrollNum([7, 5, 0, 4, 9], '.scrollNum')
 
     </script>
   </body>
