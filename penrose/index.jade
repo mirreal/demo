@@ -1,0 +1,16 @@
+mixin penrose()
+    .penrose-triangle
+        - var sides = 3
+        while sides--
+            .side
+                .cube
+                    .scale
+                        - var faces = 6
+                        while faces--
+                            .face
+
+.view
+    .axis
+        -  var n = 6
+        while n--
+            +penrose

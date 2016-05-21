@@ -1,0 +1,155 @@
+
+body {
+  background: #252525;
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+$view-size: 450px;
+
+.view {
+  position: relative;
+  height: $view-size;
+  width: $view-size;
+  overflow: hidden;
+
+  * { transform-style: preserve-3d; }
+  > .axis {
+    //transform: rotateX(-35.25deg) rotateY(45deg);
+  }
+}
+
+
+
+.scale,
+.cube,
+.axis,
+.face,
+.face:before,
+.face:after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+$n-triangles: 6;
+
+$base-size: 30px;
+$length-factor: 5;
+$side-size: $base-size*$length-factor;
+$triangle-height: $base-size*$length-factor;
+$triangle-width: $base-size*$length-factor;
+
+$colors: (#FF8552,transparent,#E9D758,#E9D758,#297373,transparent);
+
+
+.penrose-triangle {
+  height: $triangle-height;
+  width: $triangle-width;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: $triangle-height*-.75 $triangle-width*-.5;
+  transform-origin: 47% 74%;
+
+
+  transform: rotateX(-35.25deg) rotateY(45deg);
+
+  @for $i from 0 to $n-triangles {
+    &:nth-child(#{$i + 1}) {
+      transform:
+              rotateZ(-360deg/$n-triangles*$i + 30)
+              translateY($base-size*3.75)
+              rotateZ(89.5deg)
+              rotateX(-35.3deg) rotateY(45deg);
+    }
+  }
+}
+
+
+
+
+.side {
+  height: $base-size;
+  width: $base-size;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  .face {
+    &:before {
+      content: '';
+      background-color: currentColor;
+      transform-origin: 0% 100%;
+    }
+    @for $i from 1 through 6 {
+      &:nth-child(#{$i}) {
+        &:before {
+          color: nth($colors,$i);
+        }
+        transform:
+                translate3d(0,0,$base-size/2)
+                rotateX(if($i<4,90deg*$i,0))
+                rotateY(if($i>=4,(90deg*($i - 5)),0))
+                translate3d(0,0,$base-size/2);
+      }
+    }
+  }
+
+  .scale {
+    transform-origin: 0% 0% 0;
+  }
+  &:nth-child(1) {
+    transform: translate3d(0,$base-size*($length-factor - 1),0);
+
+    .scale {
+      transform: scaleX($length-factor);
+    }
+    .face {
+
+      &:nth-child(5):before {
+        background-image: linear-gradient(to right, nth($colors,5) , nth($colors,3) 100%/$length-factor * ($length-factor - 2));
+      }
+
+    }
+  }
+  &:nth-child(2) {
+    .scale {
+      transform: scaleY($length-factor);
+    }
+    .face {
+      &:nth-child(1):before {
+        visibility: hidden;
+      }
+      &:nth-child(4):before {
+        background-image: linear-gradient(nth($colors,1) , nth($colors,3) 100%/$length-factor * ($length-factor - 2));
+      }
+
+    }
+  }
+  &:nth-child(3) {
+    .scale {
+      transform: scaleZ($length-factor);
+
+      .face {
+        &:nth-child(5):before {
+          visibility: hidden;
+        }
+        &:nth-child(1):before {
+          background-image: linear-gradient(nth($colors,5) 100%/$length-factor, nth($colors,1) 100%/$length-factor * ($length-factor - 1));
+        }
+        &:nth-child(4):before {
+          transform: scaleX(1/$length-factor*($length-factor - 2))
+        }
+        &:nth-child(3):before {
+          transform: scaleY(1/$length-factor*($length-factor - 2))
+        }
+      }
+    }
+  }
+}
