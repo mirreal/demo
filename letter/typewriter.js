@@ -19,6 +19,8 @@ var typewriter = function(element) {
     }
 
     $this.innerHTML = html.substring(0, progress) + (progress & 1 ? '_' : '');
+    document.body.scrollTop = document.body.scrollHeight;
+
     if (progress >= html.length) {
       clearInterval(loop);
     }
