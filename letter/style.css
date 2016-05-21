@@ -1,0 +1,17 @@
+body {
+    background-color: #fefefe;
+    font-size: 14px;
+    line-height: 20px;
+    color: #282828;
+}
+
+.note {
+    margin: 10px auto;
+    padding: 20px 10px;
+    background-color: #fefefe;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 0 6px #aaa;
+    -webkit-box-shadow: 0 0 6px #aaa;
+    border-bottom: none;
+}
