@@ -1,0 +1,29 @@
+{
+  "preset": "google",
+  "excludeFiles": [
+    "node_modules/**",
+    "build/**",
+    "src/**/*.tpl.js"
+  ],
+  "maxErrors": 128,
+  "maximumLineLength": {
+    "value": 100,
+    "allExcept": ["comments", "regex"]
+  },
+  "requireCurlyBraces": [
+    "for",
+    "while",
+    "do",
+    "try",
+    "catch"
+  ],
+  "disallowMultipleVarDecl": true,
+  "disallowEmptyBlocks": true,
+  "disallowShorthandArrowFunctions": true,
+  "disallowTrailingComma": true,
+  "requireCapitalizedConstructors": true,
+  "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties",
+  "requireDollarBeforejQueryAssignment": false, // todo
+  "requireTemplateStrings": false,
+  "requireSpaceBetweenArguments": true
+}
