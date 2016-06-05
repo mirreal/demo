@@ -27,7 +27,7 @@
 BLUR = false;
 
 PULSATION = true;
-PULSATION_PERIOD = 600;
+PULSATION_PERIOD = 1200;
 PARTICLE_RADIUS = 4;
 
 /* disable blur before using blink */
@@ -46,14 +46,14 @@ TREMBLING = 0; /* 0 - infinity */
 
 FANCY_FONT = "Arial";
 
-BACKGROUND = "#000";
+BACKGROUND = "#282828";
 
 BLENDING = true;
 
 /* if empty the text will be a random number */
 var TEXT;
 num = 0;
-TEXTArray = ['My', 'Loverert', "天空", "Nope", "大海", "直到", "Node"];
+TEXTArray = ['248', '芠芠', "天空", "Nope", "大海", "直到", "Node"];
 
 QUALITY_TO_FONT_SIZE = [10, 12, 40, 50, 100, 350];
 QUALITY_TO_SCALE = [20, 6, 4, 2, 0.9, 0.5];
@@ -79,14 +79,14 @@ window.onload = function () {
 
   var particles = [];
   for (var i = 1; i <= total_particles; i++) {
-    particles.push(new particle(i));
+    particles.push(new Particle(i));
   }
 
-  function particle(i) {
+  function Particle(i) {
     this.r = Math.round(Math.random() * 255 | 0);
     this.g = Math.round(Math.random() * 255 | 0);
     this.b = Math.round(Math.random() * 255 | 0);
-    this.alpha = 1;
+    this.alpha = 0.8;
 
     this.x = (i * area_length) % W;
     this.y = (i * area_length) / W * area_length;

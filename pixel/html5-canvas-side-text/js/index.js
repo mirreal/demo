@@ -8,355 +8,45 @@
 
   Updated code
   ------------
-  https://github.com/kennethcachia/Shape-Shifter 
+  https://github.com/kennethcachia/Shape-Shifter
 
 */
 
-
 var S = {
-  init: function () {
-    var action = window.location.href,
-        i = action.indexOf('?a=');
+  init: function() {
+    var href = window.location.href;
+    var index = href.indexOf('?q=');
 
-    S.Drawing.init('.canvas');
+    S.drawing.init('.canvas');
     document.body.classList.add('body--ready');
 
-    if (i !== -1) {
-      S.UI.simulate(decodeURI(action).substring(i + 3));
+    if (index !== -1) {
+      S.ui.simulate(decodeURI(href).substring(index + 3));
     } else {
-      S.UI.simulate('Shape|Shifter|Type|to start|#rectangle|#countdown 3||');
+      S.ui.simulate('Shape|Shifter|Type|to start|#rectangle|#countdown 3||');
     }
 
-    S.Drawing.loop(function () {
+    S.drawing.loop(function() {
       S.Shape.render();
     });
   }
 };
 
 
-S.Drawing = (function () {
-  var canvas,
-      context,
-      renderFn
-      requestFrame = window.requestAnimationFrame       ||
-                     window.webkitRequestAnimationFrame ||
-                     window.mozRequestAnimationFrame    ||
-                     window.oRequestAnimationFrame      ||
-                     window.msRequestAnimationFrame     ||
-                     function(callback) {
-                       window.setTimeout(callback, 1000 / 60);
-                     };
+S.drawing = draw;
 
-  return {
-    init: function (el) {
-      canvas = document.querySelector(el);
-      context = canvas.getContext('2d');
-      this.adjustCanvas();
-
-      window.addEventListener('resize', function (e) {
-        S.Drawing.adjustCanvas();
-      });
-    },
-
-    loop: function (fn) {
-      renderFn = !renderFn ? fn : renderFn;
-      this.clearFrame();
-      renderFn();
-      requestFrame.call(window, this.loop.bind(this));
-    },
-
-    adjustCanvas: function () {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    },
-
-    clearFrame: function () {
-      context.clearRect(0, 0, canvas.width, canvas.height);
-    },
-
-    getArea: function () {
-      return { w: canvas.width, h: canvas.height };
-    },
-
-    drawCircle: function (p, c) {
-      context.fillStyle = c.render();
-      context.beginPath();
-      context.arc(p.x, p.y, p.z, 0, 2 * Math.PI, true);
-      context.closePath();
-      context.fill();
-    }
-  }
-}());
+S.ui = ui;
 
 
-S.UI = (function () {
-  var input = document.querySelector('.ui-input'),
-      ui = document.querySelector('.ui'),
-      help = document.querySelector('.help'),
-      commands = document.querySelector('.commands'),
-      overlay = document.querySelector('.overlay'),
-      canvas = document.querySelector('.canvas'),
-      interval,
-      isTouch = false, //('ontouchstart' in window || navigator.msMaxTouchPoints),
-      currentAction,
-      resizeTimer,
-      time,
-      maxShapeSize = 30,
-      firstAction = true,
-      sequence = [],
-      cmd = '#';
-
-  function formatTime(date) {
-    var h = date.getHours(),
-        m = date.getMinutes(),
-    m = m < 10 ? '0' + m : m;
-    return h + ':' + m;
-  }
-
-  function getValue(value) {
-    return value && value.split(' ')[1];
-  }
-
-  function getAction(value) {
-    value = value && value.split(' ')[0];
-    return value && value[0] === cmd && value.substring(1);
-  }
-
-  function timedAction(fn, delay, max, reverse) {
-    clearInterval(interval);
-    currentAction = reverse ? max : 1;
-    fn(currentAction);
-
-    if (!max || (!reverse && currentAction < max) || (reverse && currentAction > 0)) {
-      interval = setInterval(function () {
-        currentAction = reverse ? currentAction - 1 : currentAction + 1;
-        fn(currentAction);
-
-        if ((!reverse && max && currentAction === max) || (reverse && currentAction === 0)) {
-          clearInterval(interval);
-        }
-      }, delay);
-    }
-  }
-
-  function reset(destroy) {
-    clearInterval(interval);
-    sequence = [];
-    time = null;
-    destroy && S.Shape.switchShape(S.ShapeBuilder.letter(''));
-  }
-
-  function performAction(value) {
-    var action,
-        value,
-        current;
-
-    overlay.classList.remove('overlay--visible');
-    sequence = typeof(value) === 'object' ? value : sequence.concat(value.split('|'));
-    input.value = '';
-    checkInputWidth();
-
-    timedAction(function (index) {
-      current = sequence.shift();
-      action = getAction(current);
-      value = getValue(current);
-
-      switch (action) {
-        case 'countdown':
-          value = parseInt(value) || 10;
-          value = value > 0 ? value : 10;
-
-          timedAction(function (index) {
-            if (index === 0) {
-              if (sequence.length === 0) {
-                S.Shape.switchShape(S.ShapeBuilder.letter(''));
-              } else {
-                performAction(sequence);
-              }
-            } else {
-              S.Shape.switchShape(S.ShapeBuilder.letter(index), true);
-            }
-          }, 1000, value, true);
-          break;
-
-        case 'rectangle':
-          value = value && value.split('x');
-          value = (value && value.length === 2) ? value : [maxShapeSize, maxShapeSize / 2];
-
-          S.Shape.switchShape(S.ShapeBuilder.rectangle(Math.min(maxShapeSize, parseInt(value[0])), Math.min(maxShapeSize, parseInt(value[1]))));
-          break;
-
-        case 'circle':
-          value = parseInt(value) || maxShapeSize;
-          value = Math.min(value, maxShapeSize);
-          S.Shape.switchShape(S.ShapeBuilder.circle(value));
-          break;
-
-        case 'time':
-          var t = formatTime(new Date());
-
-          if (sequence.length > 0) {
-            S.Shape.switchShape(S.ShapeBuilder.letter(t));
-          } else {
-            timedAction(function () {
-              t = formatTime(new Date());
-              if (t !== time) {
-                time = t;
-                S.Shape.switchShape(S.ShapeBuilder.letter(time));
-              }
-            }, 1000);
-          }
-          break;
-
-        default:
-          S.Shape.switchShape(S.ShapeBuilder.letter(current[0] === cmd ? 'What?' : current));
-      }
-    }, 2000, sequence.length);
-  }
-
-  function checkInputWidth(e) {
-    if (input.value.length > 18) {
-      ui.classList.add('ui--wide');
-    } else {
-      ui.classList.remove('ui--wide');
-    }
-
-    if (firstAction && input.value.length > 0) {
-      ui.classList.add('ui--enter');
-    } else {
-      ui.classList.remove('ui--enter');
-    }
-  }
-
-  function bindEvents() {
-    document.body.addEventListener('keydown', function (e) {
-      input.focus();
-
-      if (e.keyCode === 13) {
-        firstAction = false;
-        reset();
-        performAction(input.value);
-      }
-    });
-
-    input.addEventListener('input', checkInputWidth);
-    input.addEventListener('change', checkInputWidth);
-    input.addEventListener('focus', checkInputWidth);
-
-    help.addEventListener('click', function (e) {
-      overlay.classList.toggle('overlay--visible');
-      overlay.classList.contains('overlay--visible') && reset(true);
-    });
-
-    commands.addEventListener('click', function (e) {
-      var el,
-          info,
-          demo,
-          tab,
-          active,
-          url;
-
-      if (e.target.classList.contains('commands-item')) {
-        el = e.target;
-      } else {
-        el = e.target.parentNode.classList.contains('commands-item') ? e.target.parentNode : e.target.parentNode.parentNode;
-      }
-
-      info = el && el.querySelector('.commands-item-info');
-      demo = el && info.getAttribute('data-demo');
-      url = el && info.getAttribute('data-url');
-
-      if (info) {
-        overlay.classList.remove('overlay--visible');
-
-        if (demo) {
-          input.value = demo;
-
-          if (isTouch) {
-            reset();
-            performAction(input.value);
-          } else {
-            input.focus();
-          }
-        } else if (url) {
-          //window.location = url;
-        }
-      }
-    });
-
-    canvas.addEventListener('click', function (e) {
-      overlay.classList.remove('overlay--visible');
-    });
-  }
-
-  function init() {
-    bindEvents();
-    input.focus();
-    isTouch && document.body.classList.add('touch');
-  }
-
-  // Init
-  init();
-
-  return {
-    simulate: function (action) {
-      performAction(action);
-    }
-  }
-}());
-
-
-S.UI.Tabs = (function () {
-  var tabs = document.querySelector('.tabs'),
-      labels = document.querySelector('.tabs-labels'),
-      triggers = document.querySelectorAll('.tabs-label'),
-      panels = document.querySelectorAll('.tabs-panel');
-
-  function activate(i) {
-    triggers[i].classList.add('tabs-label--active');
-    panels[i].classList.add('tabs-panel--active');
-  }
-
-  function bindEvents() {
-    labels.addEventListener('click', function (e) {
-      var el = e.target,
-          index;
-
-      if (el.classList.contains('tabs-label')) {
-        for (var t = 0; t < triggers.length; t++) {
-          triggers[t].classList.remove('tabs-label--active');
-          panels[t].classList.remove('tabs-panel--active');
-
-          if (el === triggers[t]) {
-            index = t;
-          }
-        }
-
-        activate(index);
-      }
-    });
-  }
-
-  function init() {
-    activate(0);
-    bindEvents();
-  }
-
-  // Init
-  init();
-}());
-
-
-S.Point = function (args) {
-  this.x = args.x;
-  this.y = args.y;
-  this.z = args.z;
-  this.a = args.a;
-  this.h = args.h;
+S.Point = function(opts) {
+  this.x = opts.x;
+  this.y = opts.y;
+  this.z = opts.z;
+  this.a = opts.a;
+  this.h = opts.h;
 };
 
-
-S.Color = function (r, g, b, a) {
+S.Color = function(r, g, b, a) {
   this.r = r;
   this.g = g;
   this.b = b;
@@ -364,13 +54,12 @@ S.Color = function (r, g, b, a) {
 };
 
 S.Color.prototype = {
-  render: function () {
-    return 'rgba(' + this.r + ',' +  + this.g + ',' + this.b + ',' + this.a + ')';
+  render: function() {
+    return 'rgba(' + this.r + ',' +  +this.g + ',' + this.b + ',' + this.a + ')';
   }
 };
 
-
-S.Dot = function (x, y) {
+S.Dot = function(x, y) {
   this.p = new S.Point({
     x: x,
     y: y,
@@ -389,7 +78,7 @@ S.Dot = function (x, y) {
 };
 
 S.Dot.prototype = {
-  clone: function () {
+  clone: function() {
     return new S.Point({
       x: this.x,
       y: this.y,
@@ -399,12 +88,12 @@ S.Dot.prototype = {
     });
   },
 
-  _draw: function () {
+  _draw: function() {
     this.c.a = this.p.a;
-    S.Drawing.drawCircle(this.p, this.c);
+    S.drawing.drawCircle(this.p, this.c);
   },
 
-  _moveTowards: function (n) {
+  _moveTowards: function(n) {
     var details = this.distanceTo(n, true),
         dx = details[0],
         dy = details[1],
@@ -431,7 +120,7 @@ S.Dot.prototype = {
     return false;
   },
 
-  _update: function () {
+  _update: function() {
     if (this._moveTowards(this.t)) {
       var p = this.q.shift();
 
@@ -448,7 +137,7 @@ S.Dot.prototype = {
         } else {
           this.move(new S.Point({
             x: this.p.x + (Math.random() * 50) - 25,
-            y: this.p.y + (Math.random() * 50) - 25,
+            y: this.p.y + (Math.random() * 50) - 25
           }));
         }
       }
@@ -460,7 +149,7 @@ S.Dot.prototype = {
     this.p.z = Math.max(1, this.p.z - (d * 0.05));
   },
 
-  distanceTo: function (n, details) {
+  distanceTo: function(n, details) {
     var dx = this.p.x - n.x,
         dy = this.p.y - n.y,
         d = Math.sqrt(dx * dx + dy * dy);
@@ -468,20 +157,19 @@ S.Dot.prototype = {
     return details ? [dx, dy, d] : d;
   },
 
-  move: function (p, avoidStatic) {
+  move: function(p, avoidStatic) {
     if (!avoidStatic || (avoidStatic && this.distanceTo(p) > 1)) {
       this.q.push(p);
     }
   },
 
-  render: function () {
+  render: function() {
     this._update();
     this._draw();
   }
-}
+};
 
-
-S.ShapeBuilder = (function () {
+S.ShapeBuilder = (function() {
   var gap = 13,
       shapeCanvas = document.createElement('canvas'),
       shapeContext = shapeCanvas.getContext('2d'),
@@ -498,14 +186,14 @@ S.ShapeBuilder = (function () {
 
   function processCanvas() {
     var pixels = shapeContext.getImageData(0, 0, shapeCanvas.width, shapeCanvas.height).data;
-        dots = [],
-        pixels,
-        x = 0,
-        y = 0,
-        fx = shapeCanvas.width,
-        fy = shapeCanvas.height,
-        w = 0,
-        h = 0;
+    dots = [],
+    pixels,
+    x = 0,
+    y = 0,
+    fx = shapeCanvas.width,
+    fy = shapeCanvas.height,
+    w = 0,
+    h = 0;
 
     for (var p = 0; p < pixels.length; p += (4 * gap)) {
       if (pixels[p + 3] > 0) {
@@ -529,7 +217,7 @@ S.ShapeBuilder = (function () {
       }
     }
 
-    return { dots: dots, w: w + fx, h: h + fy };
+    return {dots: dots, w: w + fx, h: h + fy};
   }
 
   function setFontSize(s) {
@@ -549,24 +237,24 @@ S.ShapeBuilder = (function () {
   init();
 
   return {
-    imageFile: function (url, callback) {
+    imageFile: function(url, callback) {
       var image = new Image(),
-          a = S.Drawing.getArea();
+          a = S.drawing.getArea();
 
-      image.onload = function () {
+      image.onload = function() {
         shapeContext.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height);
         shapeContext.drawImage(this, 0, 0, a.h * 0.6, a.h * 0.6);
         callback(processCanvas());
       };
 
-      image.onerror = function () {
+      image.onerror = function() {
         callback(S.ShapeBuilder.letter('What?'));
-      }
+      };
 
       image.src = url;
     },
 
-    circle: function (d) {
+    circle: function(d) {
       var r = Math.max(0, d) / 2;
       shapeContext.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height);
       shapeContext.beginPath();
@@ -577,12 +265,12 @@ S.ShapeBuilder = (function () {
       return processCanvas();
     },
 
-    letter: function (l) {
+    letter: function(l) {
       var s = 0;
 
       setFontSize(fontSize);
       s = Math.min(fontSize,
-                  (shapeCanvas.width / shapeContext.measureText(l).width) * 0.8 * fontSize, 
+                  (shapeCanvas.width / shapeContext.measureText(l).width) * 0.8 * fontSize,
                   (shapeCanvas.height / fontSize) * (isNumber(l) ? 1 : 0.45) * fontSize);
       setFontSize(s);
 
@@ -592,7 +280,7 @@ S.ShapeBuilder = (function () {
       return processCanvas();
     },
 
-    rectangle: function (w, h) {
+    rectangle: function(w, h) {
       var dots = [],
           width = gap * w,
           height = gap * h;
@@ -601,18 +289,17 @@ S.ShapeBuilder = (function () {
         for (var x = 0; x < width; x += gap) {
           dots.push(new S.Point({
             x: x,
-            y: y,
+            y: y
           }));
         }
       }
 
-      return { dots: dots, w: width, h: height };
+      return {dots: dots, w: width, h: height};
     }
   };
 }());
 
-
-S.Shape = (function () {
+S.Shape = (function() {
   var dots = [],
       width = 0,
       height = 0,
@@ -620,15 +307,15 @@ S.Shape = (function () {
       cy = 0;
 
   function compensate() {
-    var a = S.Drawing.getArea();
+    var a = S.drawing.getArea();
 
     cx = a.w / 2 - width / 2;
     cy = a.h / 2 - height / 2;
   }
 
   return {
-    shuffleIdle: function () {
-      var a = S.Drawing.getArea();
+    shuffleIdle: function() {
+      var a = S.drawing.getArea();
 
       for (var d = 0; d < dots.length; d++) {
         if (!dots[d].s) {
@@ -640,9 +327,9 @@ S.Shape = (function () {
       }
     },
 
-    switchShape: function (n, fast) {
+    switchShape: function(n, fast) {
       var size,
-          a = S.Drawing.getArea();
+          a = S.drawing.getArea();
 
       width = n.w;
       height = n.h;
@@ -699,7 +386,7 @@ S.Shape = (function () {
 
           dots[i].s = false;
           dots[i].e = 0.04;
-          dots[i].move(new S.Point({ 
+          dots[i].move(new S.Point({
             x: Math.random() * a.w,
             y: Math.random() * a.h,
             a: 0.3, //.4
@@ -710,13 +397,12 @@ S.Shape = (function () {
       }
     },
 
-    render: function () {
+    render: function() {
       for (var d = 0; d < dots.length; d++) {
         dots[d].render();
       }
     }
-  }
+  };
 }());
-
 
 S.init();
