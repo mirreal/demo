@@ -1,6 +1,5 @@
 //defiene(require, exports, module) {}
 
-
 function Scratcher() {
   this.canvas = document.querySelector('canvas');
   this.context = this.canvas.getContext('2d');
@@ -82,7 +81,7 @@ Scratcher.prototype.listen = function() {
     var data = ctx.getImageData(0, 0, width, height).data;
 
     for (var i = 0, j = 0; i < data.length; i += 4) {
-      if (!(data[i] || data[i+1] || data[i+2] || data[i+3])) {
+      if (!(data[i] || data[i + 1] || data[i + 2] || data[i + 3])) {
         j++;
       }
     }
@@ -127,7 +126,7 @@ Scratcher.prototype.drawLine = function(circle) {
   ctx.lineWidth = circle.size;
   ctx.lineCap = 'round';
 
-  ctx.beginPath()
+  ctx.beginPath();
 
   var sessionId = circle.sessionId;
   if (this.last[sessionId]) {
@@ -136,14 +135,13 @@ Scratcher.prototype.drawLine = function(circle) {
     ctx.stroke();
   } else {
     ctx.moveTo(circle.x, circle.y);
-    ctx.arc(circle.x, circle.y, circle.size / 2, 0,  Math.PI*2, false);
+    ctx.arc(circle.x, circle.y, circle.size / 2, 0,  Math.PI * 2, false);
     ctx.fill();
   }
   ctx.closePath();
 
   this.last[sessionId] = circle;
 };
-
 
 new Scratcher();
 

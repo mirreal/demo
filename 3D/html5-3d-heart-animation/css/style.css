@@ -24,8 +24,7 @@ body {
   height: 160px;
   -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;
-  -webkit-animation: spin 15s infinite linear;
-  animation: spin 15s infinite linear;
+  -webkit-animation: spin 6s infinite linear;
 }
 .heart3d [class^="rib"] {
   position: absolute;

@@ -58,8 +58,7 @@ var ui = (function() {
 
   function performAction(value) {
     var action,
-      value,
-      current;
+        current;
 
     sequence = typeof(value) === 'object' ? value : sequence.concat(value.split('|'));
     input.value = '';
@@ -116,6 +115,12 @@ var ui = (function() {
             }, 1000);
           }
           break;
+
+        case 'image':
+          S.ShapeBuilder.imageFile('../../image-center/img/icon-9.png', function(res) {
+            console.log(res);
+            S.Shape.switchShape(res);
+          });
 
         default:
           S.Shape.switchShape(S.ShapeBuilder.letter(current[0] === cmd ? 'What?' : current));
