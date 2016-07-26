@@ -1,0 +1,22 @@
+{
+  "name": "demo",
+  "version": "1.0.0",
+  "description": "demo collection",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mirreal/demo.git"
+  },
+  "author": "mirreal",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mirreal/demo/issues"
+  },
+  "homepage": "https://github.com/mirreal/demo#readme",
+  "devDependencies": {
+    "pug": "~0.1.0"
+  }
+}
