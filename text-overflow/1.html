@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      .text {
+        background-color: orange;
+        width: 320px;
+        height: 40px;
+        line-height: 20px;
+
+        word-wrap:normal;
+        word-break:normal;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        -webkit-line-clamp:2;
+        -webkit-box-orient:vertical;
+        display:-webkit-box;
+      }
+
+      .solo {
+        margin-top: 120px;
+        background-color: orange;
+        width: 320px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="text">大家应该都知道用text-overflow:ellipsis属性来实现单行文本的溢出显示省略号(…)。当然部分浏览器还需要加宽度width属性。</div>
+    <div class="solo">大家应该都知道用text-overflow:ellipsis属性来实现单行文本的溢出显示省略号(…)。当然部分浏览器还需要加宽度width属性。</div>
+  </body>
+</html>
